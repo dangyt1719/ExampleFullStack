@@ -1,0 +1,1336 @@
+﻿
+@using Login_MVC_.Models
+@using System.Linq
+@using System.Web.UI.HtmlControls
+@using System.Web.UI.WebControls
+@using System.Data;
+@using System.Configuration;
+@using System.Net.Http.Headers;
+@using Newtonsoft.Json;
+@model  IEnumerable<CustomerServices>
+
+@{ #line 10 "D:\A_TSI\web-site\login(mvc)\Login(MVC)\Views\Home\Index.cshtml"
+    /**/
+    /**/  /**/
+    ViewBag.Title = "Home";
+    int i = 0;
+    int q = 0;}
+
+
+<script src="https://kit.fontawesome.com/bcfad4d679.js" crossorigin="anonymous"></script>
+
+
+@*<link href="~/css/styles.css" rel="stylesheet" />*@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script src="~/Scripts/bootstrap.min.js"></script>
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<link href="~/Content/jsTree/themes/default/style.min.css" rel="stylesheet" />
+<!------ Include the above in your HEAD tag ---------->
+<link rel="stylesheet" href="~/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+<script src="~/scripts/jquery-3.0.0.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetEmployeeData();
+    });
+    function GetEmployeeData() {
+        $.get('/Home/load_infotable', {}, function (data) {
+            var loadinfotable = $("#loadinfotable");
+            $.each(data, function (index, item) {
+                var tr = $("<tr></tr>");
+                tr.html(("<td>" + item.VC_NAME + "</td>")
+                    + " " + ("<td>" + item.N_SUM_BAL + "</td>")
+                    + " " + ("<td>" + item.N_SUM_RESERVED_CUR + "</td>")
+                    + " " + ("<td>" + item.N_SUM_RESERVED + "</td>")
+                    + " " + ("<td>" + item.N_SUM_FREE + "</td>")
+                    + " " + ("<td>" + item.N_MAX_OVERDRAFT + "</td>")
+                    + " " + ("<td>" + item.RecPay + "</td>"));
+                loadinfotable.append(tr);
+            });
+        });
+    }
+</script>
+
+
+
+
+@if (Session["User"] == null || Session.Keys == null)
+    {
+
+        Response.RedirectToRoute(new { controller = "Account", action = "Login" });
+        <div class="Logout">
+            <div class="alert alert-danger" role="alert">
+                @Html.ActionLink("Login PLEASE", "Login", "Account")
+            </div>
+            <div class="alert alert-danger">
+                <strong>Пожалуйста, продите</strong> @Html.ActionLink("Login PLEASE", "Login", "Account")
+            </div>
+        </div>
+
+    }
+    else
+    {
+    
+
+
+       
+            <h6 style="color: darkblue; text-align:center;">Уважаемый абонент! Обращаем Ваше внимание, что личный кабинет находится в разработке. Для получения информации по услугам просим позвонить по номеру: 2-22-22, 3-70-70</h6>
+    
+        <input type="checkbox" id="check">
+        <!--header area start-->
+        <header>
+
+            <label for="check">
+                <i class="fas fa-bars" id="sidebar_btn"></i>
+            </label>
+            <div class="left_area">
+                <h3>Тывасвязьинформ <span>Личный кабинет</span></h3>
+            </div>
+            <div class="right_area">
+                <a href="#" class="logout_btn" id="btnLogOut" style="font-size:20px;">Выйти</a>
+            </div>
+        </header>
+        <!--header area end-->
+        <!--sidebar start-->
+        <div class="sidebar">
+            <center>
+                <img src="~/images/TSI-logo.png" class="ui-icon-image" alt="">
+                <br />
+                <p> </p>
+                <p> </p>
+                <p> </p>
+                <p> </p>
+                <p> </p>
+                <p> </p>
+                <p> </p>
+                <p> </p>
+                @{
+                    string userinfo = ViewData["UserInfo"].ToString();
+                    string userinfo2 = ViewData["UserInfo2"].ToString();
+                    string userinfo3 = ViewData["UserInfo3"].ToString();
+                }
+                <p style="margin-left: 5px;">ФИО: @userinfo </p>
+                <p style="margin-left: 5px;">Phone: @userinfo2</p>
+                <p style="margin-left: 5px;">E-mail: @userinfo3</p>
+                <br />
+
+                <br />
+
+            </center>
+            <a href="#"><i class="fas fa-list"></i><span>Лицевые счета:  <span id="rDataAccountsCount"></span></span></a>
+            <a href="#"><i class="fas fa-money"></i><span>Задолженность:  <span id="rData"></span> P.</span></a>
+            <a href="#" id="buttonID"><i class="fas fa-desktop"></i><span>Безопасный интернет </span></a>
+
+        </div>
+        <!--sidebar end-->
+
+        <section id="accountsTable" class="pb-1">
+            <div class="container-fluid">
+                <div class="tablediv ml-2 align-items-center">
+                    <table class="table table1 table-bordered  bg-white" id="loadinfotable">
+                        <thead>
+                            <tr>
+                                <th>Лицевой счет #</th>
+                                <th>Баланс</th>
+                                <th>Текущее резервирование</th>
+                                <th>Всего зарезервировано</th>
+                                <th>Доступно</th>
+                                <th>Кредитный лимит</th>
+                                <th>Рекомендуемый платеж</th>
+
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="tablediv2 ml-2 align-items-center">
+                    <table class="table table-bordered table-hover bg-white">
+                        <tr>
+                            <th align="right">Общий рекомендуемый платеж:</th>
+                            <th align="right">
+                                <strong id="rData2">
+
+                                </strong>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+        </section>
+        <div id="loading" class="loading" style="display:none"></div>
+
+
+
+        @*  <nav class="navbar " style="background-color: whitesmoke">
+                <div class="container-fluid">
+                    <div class="nav navbar-nav pull-sm-left">
+                        <img src="~/images/TSI-logo.png" style="max-width:80%; max-height:80%;" />
+                    </div>
+
+                    <div class="nav navbar-nav navbar-logo mx-auto">
+                        <h5 class="nav-link" style="color:#1c4a9b" href="#">Личный кабинет</h5>
+                    </div>
+                    <div class="nav navbar-nav pull-sm-right order-0">
+                        <button type="button" id="btnLogOut" style="background-color:whitesmoke" class="btnLogOut">
+                            <h5>Выйти</h5>
+                        </button>
+                        <!--    <h5 class="text-info ">
+                             Html.ActionLink("Выйти", "LogOut", "Account", new { id = "0123456789", onclick = "javascript:OnEdit(this);" }, new {style = "font - size:larger; color: #292b2c;" })
+                         </h5> -->
+                    </div>
+                    <div class="nav navbar-nav pull-sm-right order-2">
+                        <img src="~/images/avatar.png" style="height:50px; width:50px" />
+                    </div>
+                </div>
+            </nav>
+
+            <section id="client-info" class="mt-1">
+                <div class="container-fluid align-items-center">
+                    <div class="row ml-1 align-items-center">
+                        <div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5">
+                            <div class="index-content1">
+                                <div class="card bg-white mb-3">
+                                    <div class="card-body text-left">
+                                        @{
+                                            string userinfo = ViewData["UserInfo"].ToString();
+                                            string userinfo2 = ViewData["UserInfo2"].ToString();
+                                            string userinfo3 = ViewData["UserInfo3"].ToString();
+                                        }
+                                        <p>ФИО: @userinfo </p>
+                                        <p>Phone: @userinfo2</p>
+                                        <p>E-mail: @userinfo3</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                            <div class="index-content">
+                                <div class="card text-white bg-info mb-3">
+                                    <div class="card-body text-center">
+                                        <p class="text-center">Лицевые счета</p>
+                                        <p class="text-center" id="rDataAccountsCount"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                            <div class="index-content">
+                                <div class="card text-white bg-info mb-3">
+                                    <div class="card-body" style="align-items:center">
+                                        <div style="cursor: pointer; align-items: center; text-align:center" id="buttonID">
+                                            Безопасный интернет
+                                        </div>
+                                        <p>     </p>
+                                        <p>     </p>
+                                        <p>     </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                            <div class="index-content">
+                                <div class="card text-white bg-info mb-3">
+                                    <div class="card-body text-left">
+                                        <p class="text-center">Задолженность</p>
+                                        <p class="text-center" id="rData"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </section>
+
+
+            <section id="accountsTable" class="pb-1">
+                <div class="container-fluid">
+                    <div class="tablediv ml-2 align-items-center">
+                        <table class="table table1 table-bordered  bg-white" id="loadinfotable">
+                            <thead>
+                                <tr>
+                                    <th>Лицевой счет #</th>
+                                    <th>Баланс</th>
+                                    <th>Текущее резервирование</th>
+                                    <th>Всего зарезервировано</th>
+                                    <th>Доступно</th>
+                                    <th>Кредитный лимит</th>
+                                    <th>Рекомендуемый платеж</th>
+
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="tablediv2 ml-2 align-items-center">
+                        <table class="table table-bordered table-hover bg-white">
+                            <tr>
+                                <th align="right">Общий рекомендуемый платеж:</th>
+                                <th align="right">
+                                    <strong id="rData2">
+
+                                    </strong>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+
+                </div>
+            </section>
+            <div id="loading" class="loading" style="display:none"></div>
+
+            @*Create A Popup Modal With Registration Form For Add Or Edit Student Record*@
+
+        <div class="modal fade container-fluid" id="MyModal">
+            <div class="modal-dialog modal-lg" style="  position: relative;
+                                                    display: table;
+                                                    overflow-y: auto;
+                                                    overflow-x: auto;
+                                                    width: auto !important;
+                                                    height: auto !important;
+                                                    align-content:center;
+                                                     ">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title text-secondary">Настройте свой "Безопасный интернет"</h4>
+                        <button type="button" class="close" data-dismiss="modal" id="mdlCloseBrn">
+                            &times;
+                        </button>
+                    </div>
+                    <div class="modal-body" style="max-width:100%; width: 1200px !important;">
+
+
+
+
+                        <div id="accordion">
+                            @foreach (var s in Model)
+                            {
+                                var SkyDnsFilter_JSON = new Login_MVC_.Controllers.HomeController().SkyDnsFilters(s, Session);
+                                if (SkyDnsFilter_JSON == null)
+                                {
+                                    continue;
+                                }
+                                var e = "hr" + s.VC_LOGIN;
+                                <div class="card" id="@s.VC_LOGIN">
+                                    <div class="card-header">
+                                        <a class="card-link" data-toggle="collapse" href='@string.Format("{0}{1}", "#", e)' onclick="CollapseClicked()">
+                                            @s.VC_OBJECT
+                                        </a>
+                                    </div>
+                                    <div id='@string.Format("{0}", e)' class="collapse" data-parent="#accordion">
+                                        <div class="card-body">
+
+                                            <div class="row">
+                                                <h5>Черный список</h5>
+                                                @{
+
+                                                    TempData["SkyDnsFilter_JSON"] = SkyDnsFilter_JSON;
+                                                    string[] WhiteListSkyDns = new string[] { };
+                                                    string[] SkyDnsFilters = new string[] { };
+                                                    string[] BlackListSkyDns = new string[] { };
+
+                                                    if (SkyDnsFilter_JSON.whitelist != null)
+                                                    {
+                                                        WhiteListSkyDns = SkyDnsFilter_JSON.whitelist;
+                                                    }
+                                                    if (SkyDnsFilter_JSON.blacklist != null)
+                                                    {
+                                                        BlackListSkyDns = SkyDnsFilter_JSON.blacklist;
+                                                    }
+
+                                                    if (SkyDnsFilter_JSON.filter.Length != 0)
+                                                    {
+                                                        SkyDnsFilters = SkyDnsFilter_JSON.filter;
+                                                    }
+
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Ресурс</th>
+                                                                <th>Удалить</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="SetBlkList" data-rank="@s.VC_LOGIN" data-rank2="@Session["token"]">
+                                                            <tr id="LoadingStatus" style="color:red"></tr>
+                                                        </tbody>
+                                                    </table>
+
+                                                }
+                                                <div class="form-holder-append"></div>
+                                                <div id="order-details-booking">
+                                                    <blockquote>Добавить ресурс в черный список</blockquote>
+                                                    <div class="row">
+                                                        <form class="form-inline">
+
+                                                            <div class="form-group mx-sm-3 mb-2">
+                                                                <label for="inputPassword2" class="sr-only">Resource</label>
+                                                                <input type="text" class="form-control" id="inputBlkListItem" placeholder="www.site.ru" required="" pattern="(?::\/\/|www\.|\.)(?:\([-A-Z0-9+&@("@")#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@("@")#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@("@")#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@("@")#\/%=~_|$])">
+                                                            </div>
+                                                            <button type="submit" class="btn btn-primary mb-2" id="@s.VC_LOGIN" onclick="return addBlkListBTN(this.id)">Добавить</button>
+                                                        </form>
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+                                            <div class="row">
+                                                <h5>Белый список</h5>
+                                                @{
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Ресурс</th>
+                                                                <th>Удалить</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="SetWhtList" data-rank="@s.VC_LOGIN" data-rank2="@Session["token"]">
+                                                            <tr id="LoadingStatus" style="color:red"></tr>
+                                                        </tbody>
+                                                    </table>
+                                                }
+                                                <div class="form-holder-append"></div>
+                                                <div id="order-details-booking">
+                                                    <blockquote>Добавить ресурс в белый список</blockquote>
+                                                    <div class="row">
+                                                        <form class="form-inline">
+
+                                                            <div class="form-group mx-sm-3 mb-2">
+                                                                <label for="inputPassword2" class="sr-only">Resource</label>
+                                                                <input type="text" class="form-control" id="inputWhtListItem" placeholder="www.site.ru" required="">
+                                                            </div>
+                                                            <button type="submit" class="btn btn-primary mb-2" id="@s.VC_LOGIN" onclick="return addWhtListBTN(this.id)">Добавить</button>
+                                                        </form>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="row ml-2">
+
+                                                <h5>Фильтры</h5>
+                                                @{
+
+
+                                                    var catSkyDns = ViewBag.CtgrsSkyDns;
+                                                    foreach (var items in catSkyDns)
+                                                    {
+                                                        if (SkyDnsFilters.Any(x => x.Equals(items.Key)))
+                                                        {
+                                                            <div class="form-check ml-3">
+                                                                <label class="form-check-label">
+                                                                    <input type="checkbox" class="form-check-input" name="@items.Key" value="@items.Key" checked>@items.Value
+                                                                </label>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="form-check ml-3">
+                                                                <label class="form-check-label">
+                                                                    <input type="checkbox" class="form-check-input" name="@items.Key" value="@items.Key">@items.Value
+                                                                </label>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="btn btn-block btn-success" id="@s.VC_LOGIN" style="cursor: pointer; align-items: center; text-align:center" onclick="testBTN(this.id)">
+                                            Сохранить
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+
+
+
+
+                        </div>
+
+
+                        @*
+
+                                        <div class="tile" id="tile-1">
+                                            <!-- Nav tabs -->
+                                            <ul class="nav nav-tabs nav-justified" role="tablist">
+                                                <div class="slider"></div>
+                                                @foreach (var items in Model)
+                                                {
+                                                    var e = "hr" + items.VC_LOGIN.ToString();
+                                                    var w = "tab-" + items.VC_LOGIN.ToString();
+                                                    if (i == 0)
+                                                    {
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="home-tab" data-toggle="tab" href='@string.Format("{0}{1}", "#",e)' role="tab" aria-controls="home" aria-selected="true">@items.VC_OBJECT</a>
+                                                        </li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" id="profile-tab" data-toggle="tab" href='@string.Format("{0}{1}", "#","qwe")' role="tab" aria-controls="profile" aria-selected="false"> @items.VC_OBJECT</a>
+                                                        </li>
+                                                    }
+                                                    i++;
+                                                }
+                                            </ul>
+
+                                            <!-- Tab panes -->
+                                            <div class="tab-content">
+                                                @foreach (var item in Model)
+                                                {
+
+                                                    var SkyDnsFilter_JSON = new Login_MVC_.Controllers.HomeController().SkyDnsFilters(item, Session);
+                                                    TempData["SkyDnsFilter_JSON"] = SkyDnsFilter_JSON;
+                                                    string[] SkyDnsFilters = new string[] { };
+                                                    if (SkyDnsFilter_JSON == null)
+                                                    {
+                                                        SkyDnsFilters = new string[] { };
+                                                    }
+                                                    else
+                                                    {
+                                                        SkyDnsFilters = SkyDnsFilter_JSON.filter;
+                                                    }
+
+                                                    var e = "hr" + item.VC_LOGIN.ToString();
+                                                    if (q == 0)
+                                                    {
+                                                        <div class="tab-pane fade" id='@string.Format("{0}",e)' role="tabpanel" aria-labelledby="home-tab">
+                                                            @{
+                                                                var catSkyDns = ViewBag.CtgrsSkyDns;
+                                                                foreach (var items in catSkyDns)
+                                                                {
+                                                                    if (SkyDnsFilters.Any(x => x.Contains(items.Key)))
+                                                                    {
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" class="form-check-input" name="@items.Key" value="@items.Key" checked>@items.Value
+                                                                            </label>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" class="form-check-input" name="@items.Key" value="@items.Key">@items.Value
+                                                                            </label>
+                                                                        </div>
+                                                                    }
+                                                                }
+
+                                                            }
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="tab-pane fade" id='@string.Format("{0}","qwe")' role="tabpanel" aria-labelledby="profile-tab">
+                                                            @{
+                                                                var catSkyDns = ViewBag.CtgrsSkyDns;
+                                                                foreach (var items in catSkyDns)
+                                                                {
+                                                                    if (SkyDnsFilters.Any(x => x.Contains(items.Key)))
+                                                                    {
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" class="form-check-input" name="@items.Key" value="@items.Key" checked>@items.Value
+                                                                            </label>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" class="form-check-input" name="@items.Key" value="@items.Key">@items.Value
+                                                                            </label>
+                                                                        </div>
+                                                                    }
+                                                                }
+
+                                                            }
+                                                        </div>
+                                                    }
+                                                    q++;
+                                                }
+
+
+                                            </div>
+
+                                        </div>
+                                        <div class="btn btn-block btn-success" style="cursor: pointer; align-items: center; text-align:center" id="btnSaveSkyDns">
+                                            Сохранить
+                                        </div>
+                                        @*
+                            @if (Model.ToList().Count > 0)
+                            {
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="tabbable-panel">
+                                                <div class="tabbable-line">
+                                                    <ul class="nav nav-tabs">
+                                                        @foreach (var items in Model)
+                                                        {
+                                                            var e = "hr" + items.VC_LOGIN.ToString();
+                                                            if (i == 0)
+                                                            {
+
+                                                                <li class="active">
+                                                                    <a href='@string.Format("{0}{1}", "#",e)' data-toggle="tab">@items.VC_OBJECT</a>
+                                                                </li>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <li><a href="#qwe123" data-toggle="tab">@items.VC_OBJECT</a></li>
+                                                            }
+                                                            i++;
+                                                        }
+
+                                                    </ul>
+
+                                                    <div class="tab-content" style="max-width:100%; width: 600px !important; ">
+                                                        <div class="col-md-12">
+                                                            @foreach (var item in Model)
+                                                            {
+
+                                                                var SkyDnsFilter_JSON = new Login_MVC_.Controllers.HomeController().SkyDnsFilters(item, Session);
+                                                                TempData["SkyDnsFilter_JSON"] = SkyDnsFilter_JSON;
+                                                                string[] SkyDnsFilters = new string[] { };
+                                                                if (SkyDnsFilter_JSON == null)
+                                                                {
+                                                                    SkyDnsFilters = new string[] { };
+                                                                }
+                                                                else
+                                                                {
+                                                                    SkyDnsFilters = SkyDnsFilter_JSON.filter;
+                                                                }
+
+                                                                var e = "hr" + item.VC_LOGIN.ToString();
+                                                                if (q == 0)
+                                                                {
+
+                                                                    <div class="tab-pane active" id="@e">
+                                                                        @{
+                                                                            var catSkyDns = ViewBag.CtgrsSkyDns;
+                                                                            foreach (var items in catSkyDns)
+                                                                            {
+                                                                                if (SkyDnsFilters.Any(x => x.Contains(items.Key)))
+                                                                                {
+                                                                                    <div class="form-check">
+                                                                                        <label class="form-check-label">
+                                                                                            <input type="checkbox" class="form-check-input" name="@items.Key" value="@items.Key" checked>@items.Value
+                                                                                        </label>
+                                                                                    </div>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <div class="form-check">
+                                                                                        <label class="form-check-label">
+                                                                                            <input type="checkbox" class="form-check-input" name="@items.Key" value="@items.Key">@items.Value
+                                                                                        </label>
+                                                                                    </div>
+                                                                                }
+                                                                            }
+
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="tab-pane" id="qwe123">
+                                                                        ddfgdfgdfgdfg
+                                                                        @*  @{
+                                                                var catSkyDns = ViewBag.CtgrsSkyDns;
+                                                                foreach (var items in catSkyDns)
+                                                                {
+                                                                    if (SkyDnsFilters.Any(x => x.Contains(items.Key)))
+                                                                    {
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" class="form-check-input" name="@items.Key" value="@items.Key" checked>@items.Value
+                                                                            </label>
+                                                                        </div>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="checkbox" class="form-check-input" name="@items.Key" value="@items.Key">@items.Value
+                                                                            </label>
+                                                                        </div>
+                                                                    }
+                                                                }
+
+                                                            }
+                                                                    </div>
+                                                                }
+                                                                q++;
+
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }*@
+                    </div>
+                    @*Create A PopUp Modal For DeleteConfirmation*@
+
+                    <div class="modal fade" id="DeleteConfirmation">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                                    <h4>Delete Student Record</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <h4>Are You Sure? You Want To Delete This Record.</h4>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="#" class="btn btn-primary" data-dismiss="modal" id="r">Cancle</a>
+                                    <a href="#" class="btn btn-danger" onclick="ConfirmDelete()">Confirm</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        /*
+    <!-- Team -->
+    <section id="team" class="pb-0">
+        <div class="container">
+            <div class="row">
+
+                <!-- Team member -->
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="image-flip">
+                        <div class="mainflip flip-0">
+                            <div class="frontside">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <p>
+                                            <img class=" img-fluid" src="~/images/internet-icon.png" alt="card image">
+                                        </p>
+                                        <h4 class="card-title">I N T E R N E T</h4>
+                                        <p class="card-text">Будь в контакте с Миром!</p>
+                                        <p><img src="~/images/flip-icon.jpg" alt="card image" /></p>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="backside">
+                                <div class="card">
+                                    <div class="card-body text-center mt-4">
+                                        <h4 class="card-title">I N T E R N E T</h4>
+                                        <p class="card-text">Статус: Активна   </p>
+                                        <p class="card-text">Тариф: Контакт-20</p>
+                                        <p class="card-text">Скорость: 100 Мбит/с</p>
+                                        <p class="card-text" href="#">Управление услугой</p>
+
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-skype"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-google"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./Team member -->
+                <!-- Team member -->
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="image-flip">
+                        <div class="mainflip flip-0">
+                            <div class="frontside">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <p>
+                                            <img class=" img-fluid" src="~/images/phone-icon.png" alt="card image">
+                                        </p>
+                                        <h4 class="card-title">ТЕЛЕФОНИЯ</h4>
+                                        <p class="card-text">Будь в контакте с Миром!</p>
+                                        <p><img src="~/images/flip-icon.jpg" alt="card image" /></p>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="backside">
+                                <div class="card">
+                                    <div class="card-body text-center mt-4">
+                                        <h4 class="card-title">ТЕЛЕФОНИЯ</h4>
+                                        <p class="card-text">Статус: Активна   </p>
+                                        <p class="card-text">Тариф: Контакт-20</p>
+                                        <p class="card-text">Скорость: 100 Мбит/с</p>
+
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-skype"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-google"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./Team member -->
+                <!-- Team member -->
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="image-flip">
+                        <div class="mainflip flip-0">
+                            <div class="frontside">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <p>
+                                            <img class=" img-fluid" src="~/images/multichannel.jpg" alt="card image">
+                                        </p>
+                                        <h4 class="card-title">КАНАЛЫ СВЯЗИ</h4>
+                                        <p class="card-text">Будь в контакте с Миром!</p>
+                                        <p><img src="~/images/flip-icon.jpg" alt="card image" /></p>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="backside">
+                                <div class="card">
+                                    <div class="card-body text-center mt-4">
+                                        <h4 class="card-title">КАНАЛЫ СВЯЗИ</h4>
+                                        <p class="card-text">Статус: Активна   </p>
+                                        <p class="card-text">Тариф: Контакт-20</p>
+                                        <p class="card-text">Скорость: 100 Мбит/с</p>
+                                        <p class="card-text">ываываываыв</p>
+
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-skype"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-google"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./Team member -->
+
+            </div>
+        </div>
+    </section>
+    <!-- Team -->
+    */
+
+
+    }
+<script type="text/javascript">
+      //  $("#buttonID").click(function () {
+        function CollapseClicked() {
+
+          GetBlkListTable();
+           GetWhtListTable();
+    };
+        function GetBlkListTable() {
+        $("#LoadingStatus").html("Loading....");
+        var CS = $("#SetBlkList").data("rank");
+
+        var Sess = @Html.Raw(Json.Encode(this.Session["Token"]));
+      //  ViewBag.SkyDnsLogin=CS;
+     //   alert(CS)l
+        $.get("/Home/BlkList", { "customerServices": CS, "sessionStateBase": Sess },
+            function DataBind(BlkList) {
+                var SetData = $("#SetBlkList");
+                SetData.empty();
+                var CS = $("#SetBlkList").data("rank");
+                for (var i = 0; i < BlkList.length; i++) {
+                    var Data = "<tr class='row_" + BlkList[i].name + "'>" +
+                        "<td>" + BlkList[i].name + "</td>" +
+                        "<td>" + "<a href='#' class='btn btn-danger' onclick='DeleteBlkListRecord(\"" + BlkList[i].name+"\",\""+CS+"\")'><i class='fas fa-trash-alt'></i></a>" + "</td>" +
+                        "</tr>";
+                    SetData.append(Data);
+                    $("#LoadingStatus").html(" ");
+
+                }
+            });
+        };
+
+        function GetWhtListTable() {
+        $("#LoadingStatus").html("Loading....");
+        var CS = $("#SetWhtList").data("rank");
+
+        var Sess = @Html.Raw(Json.Encode(this.Session["Token"]));
+      //  ViewBag.SkyDnsLogin=CS;
+     //   alert(CS)l
+        $.get("/Home/WhtList", { "customerServices": CS, "sessionStateBase": Sess },
+            function DataBind(WhtList) {
+                var SetData = $("#SetWhtList");
+                SetData.empty();
+                var CS = $("#SetWhtList").data("rank");
+                for (var i = 0; i < WhtList.length; i++) {
+                    var Data = "<tr class='row_" + WhtList[i].name + "'>" +
+                        "<td>" + WhtList[i].name + "</td>" +
+                        "<td>" + "<a href='#' class='btn btn-danger' onclick='DeleteWhtListRecord(\"" + WhtList[i].name+"\",\""+CS+"\")'><i class='fas fa-trash-alt'></i></a>" + "</td>" +
+                        "</tr>";
+                    SetData.append(Data);
+                    $("#LoadingStatus").html(" ");
+
+                }
+            });
+        };
+</script>
+<script type="text/javascript">
+    $("#tstOption").change(function () {
+        var item = $(this).val();
+        var sess= @Html.Raw(Json.Encode(this.Session["Token"]));
+        alert(item);
+      //  debugger;
+        $.ajax({
+            url: '@Url.Action("SkyDnsFilters2", "Home")?customerServices=' + item +'&sessionStateBase='+sess,
+            success: function (result) {
+               // $("#testBDY").html(result);
+              //  debugger;
+                var loadinfotable2 = $("#testBDY");
+                $.each(result, function (index, items) {
+                  //  var tr = $("<tr></tr>");
+                   // tr.html(("<td>" + item.Value + "</td>"));
+
+                    var tr = $("<div></div>");
+                    tr.html('"<div class="row"><div class="' + items+' col-xs-12"><div class="input-field col s4">'
+                        + '< input type = "text" id = "' + items + ' placeholder = "www.site.ru" value = "' + items + '/></div > <div class="col s1">'+
+                        '< i class= "material-icons remove" id = "'+items+'" > - Удалить</i > </div ></div ></div > "');
+                    loadinfotable2.append(tr);
+                });
+                alert(result.filters)
+            },
+            error: function (response) {
+                debugger;
+                alert("Error:" + response);
+            }
+        });
+
+
+        });
+</script>
+
+<script type="text/javascript">
+    var addBlkListBTN = function (clicked_id) {
+        var test = $(this).attr('id');
+        var qqq = "#".concat(clicked_id, " ");
+
+        var qwe = $("#inputBlkListItem").val();
+        /*  var passData = JSON.stringify({
+              'name': values,
+              'SuserSkyDns': SkyDnsFilter_JSON
+          });  */
+        $.ajax({
+            type: 'POST',
+            url: '/Home/SaveSkyDnsBlkLst',
+            data: JSON.stringify({ 'name': qwe, 'skydns': clicked_id }),
+            contentType: 'application/json',
+            success: function (result) {
+                swal("Изменения успешно сохранены", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+                $("#inputBlkListItem").val('');
+                GetBlkListTable();
+            },
+            error: function (err, result) {
+                swal("Изменения не сохранены", {
+                    icon: "error",
+                    timer: 3000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+                // alert("Error in delete" + err.responseText);
+            }
+
+        });
+        return false;
+    }
+    function addWhtListBTN(clicked_id) {
+        var test = $(this).attr('id');
+        var qqq = "#".concat(clicked_id, " ");
+
+        var qwe = $("#inputWhtListItem").val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/Home/SaveSkyDnsWhtLst',
+            data: JSON.stringify({ 'name': qwe, 'skydns': clicked_id }),
+            contentType: 'application/json',
+            success: function (result) {
+                swal("Изменения успешно сохранены", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+
+                $("#inputWhtListItem").val('');
+                GetWhtListTable();
+
+            },
+            error: function (err, result) {
+                swal("Изменения не сохранены", {
+                    icon: "error",
+                    timer: 3000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+                // alert("Error in delete" + err.responseText);
+            }
+
+        });
+        return false;
+    }
+</script>
+
+<script type="text/javascript">
+    // Removing Form Field
+
+    var DeleteBlkListRecord = function (BlkListRecord, CS) {
+        //  $("#StuId").val(StudentId);
+        $.ajax({
+            type: 'POST',
+            url: '/Home/DeleteSkyDnsBlkLst',
+            data: JSON.stringify({ 'name': BlkListRecord, 'skydns': CS }),
+            contentType: 'application/json',
+            success: function (result) {
+                swal("Изменения успешно сохранены", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+                GetBlkListTable();
+
+            },
+            error: function (err, result) {
+                swal("Изменения не сохранены", {
+                    icon: "error",
+                    timer: 3000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+
+            }
+        })
+
+    }
+    var DeleteWhtListRecord = function (WhtListRecord, CS) {
+        //  $("#StuId").val(StudentId);
+        $.ajax({
+            type: 'POST',
+            url: '/Home/DeleteSkyDnsWhtLst',
+            data: JSON.stringify({ 'name': WhtListRecord, 'skydns': CS }),
+            contentType: 'application/json',
+            success: function (result) {
+                swal("Изменения успешно сохранены", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+                GetWhtListTable();
+
+            },
+            error: function (err, result) {
+                swal("Изменения не сохранены", {
+                    icon: "error",
+                    timer: 3000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+
+            }
+        })
+
+    }
+</script>
+
+
+
+
+<script type="text/javascript">
+    $(document).ajaxStart(function () {
+        $("#loading").show();
+    });
+    $(document).ajaxSend(function () {
+        $("#loading").show();
+    });
+    $(document).ajaxStop(function () {
+        $("#loading").hide();
+    });
+    $(document).ajax(function () {
+        $("#loading").show();
+    });
+
+    /*  $(document).ajaxComplete(function () {
+          $("#loading").hide();
+      });*/
+</script>
+
+<script type="text/javascript">
+    var spinnerVisible = false;
+    function showProgress() {
+        if (!spinnerVisible) {
+            $("div#spinner").fadeIn("fast");
+            spinnerVisible = true;
+        }
+    };
+    function hideProgress() {
+        if (spinnerVisible) {
+            var spinner = $("div#spinner");
+            spinner.stop();
+            spinner.fadeOut("fast");
+            spinnerVisible = false;
+        }
+    };
+</script>
+
+
+<script type="text/jscript">
+    var url = "/Home/Load_userinfotable";
+    $.get(url, null, function (data) {
+        $("#rData").html(data.RecommendedPay);
+    });
+</script>
+<script type="text/jscript">
+    var url = "/Home/Load_userinfotable";
+    $.get(url, null, function (data) {
+        $("#rData2").html(data.RecommendedPay);
+    });
+</script>
+<script type="text/jscript">
+    var url = "/Home/Load_userinfotable";
+    $.get(url, null, function (data) {
+        $("#rDataAccountsCount").html(data.AccountsCount);
+    });
+</script>
+
+<script type="text/jscript">
+    $('#buttonID').click(function () {
+        $("#ModalTitle").html("Add New Student");
+        $("#MyModal").modal();
+    });
+</script>
+
+<script type="text/javascript">
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href") // activated tab
+        alert(target);
+    });
+</script>
+
+<script>
+    function testBTN(clicked_id) {
+        var test = $(this).attr('id');
+        var qqq = "#".concat(clicked_id, " ");
+
+        var values1 = $(qqq.concat('input[type="checkbox"].form-check-input:checked')).map(function() {
+        return $(this).val();
+        }).toArray();
+
+        var values = $('input[type="checkbox"].form-check-input:checked').map(function () {
+            return $(this).val();
+        }).toArray();
+
+        var skydns = '@TempData["SkyDnsFilter_JSON"]';
+      /*  var passData = JSON.stringify({
+            'name': values,
+            'SuserSkyDns': SkyDnsFilter_JSON
+        });  */
+        $.ajax({
+            type: 'POST',
+            url: '/Home/SaveSkyDns',
+            data: JSON.stringify({ 'name': values1, 'skydns': clicked_id }),
+            contentType: 'application/json',
+            success: function (result) {
+                swal("Изменения успешно сохранены", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+
+                $("#MyModal .close").trigger("click");
+                window.location.reload();
+            },
+            error: function (err, result) {
+                swal( "Изменения не сохранены",{
+                    icon: "error",
+                    timer: 3000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+               // alert("Error in delete" + err.responseText);
+            }
+        });
+    }
+</script>
+
+
+<script type="text/jscript">
+    $('#btnSaveSkyDns').click(function () {
+        var test = $(this).attr('name');
+        var values = $(' #1012692 input[type="checkbox"].form-check-input:checked').map(function() {
+        return $(this).val();
+        }).toArray();
+        var skydns = '@TempData["SkyDnsFilter_JSON"]';
+
+
+
+        alert(test);
+      /*  var passData = JSON.stringify({
+            'name': values,
+            'SuserSkyDns': SkyDnsFilter_JSON
+        });  */
+        $.ajax({
+            type: 'POST',
+            url: '/Home/SaveSkyDns',
+            data: JSON.stringify({ 'name': values, 'skydns': test  }),
+            contentType: 'application/json',
+            success: function (result) {
+                swal("Изменения успешно сохранены", {
+                    icon: "success",
+                    timer: 3000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+
+                $("#MyModal .close").trigger("click");
+            },
+            error: function (err, result) {
+                swal( "Изменения не сохранены",{
+                    icon: "error",
+                    timer: 3000,
+                    buttons: false,
+                    showCancelButton: false,
+                    showConfirmButton: false
+                });
+               // alert("Error in delete" + err.responseText);
+            }
+        });
+
+    });
+</script>
+
+<script type="text/javascript">
+    $('#btnLogOut').click(function ()
+    {
+        swal(
+            {
+                title: "Выход из личного кабинета",
+                text: "Подтвердите действие",
+                type: 'info',
+                confirmButtonClass: "btn-info",
+                confirmButtonText: 'Ok'
+            }).then(function () {
+                swal("Вы вышли из личного кабинета!", {
+                    icon: "success",
+                    timer: 3000
+                });
+                setTimeout(() => {
+                      var url = '@Url.Action("LogOut", "Account")';
+                window.location.href = url;
+                }, 1000);
+
+            });
+
+    });
+
+</script>
+
+@TempData["User"]

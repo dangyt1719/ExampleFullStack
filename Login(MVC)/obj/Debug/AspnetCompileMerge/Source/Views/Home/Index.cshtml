@@ -1,0 +1,365 @@
+﻿
+
+@model  Login_MVC_.Models.AccountsInfoTable
+@{
+    /**/
+
+    /**/
+    ViewBag.Title = "Home";
+}
+
+
+
+<link href="~/styles/LogInERR.css" rel="stylesheet" />
+<link href="~/css/styles.css" rel="stylesheet" />
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<script src="~/scripts/jquery-3.0.0.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        GetEmployeeData();
+    });
+    function GetEmployeeData() {
+        $.get('/Home/load_infotable', {}, function (data) {
+            var loadinfotable = $("#loadinfotable");
+            $.each(data, function (index, item) {
+                var tr = $("<tr></tr>");
+                tr.html(("<td>" + item.VC_NAME + "</td>")
+                    + " " + ("<td>" + item.N_SUM_BAL + "</td>")
+                    + " " + ("<td>" + item.N_SUM_RESERVED_CUR + "</td>")
+                    + " " + ("<td>" + item.N_SUM_RESERVED + "</td>")
+                    + " " + ("<td>" + item.N_SUM_FREE + "</td>")
+                    + " " + ("<td>" + item.N_MAX_OVERDRAFT + "</td>"));
+                loadinfotable.append(tr);
+            });
+        });
+    }
+</script>
+
+
+
+
+@if (Session["User"] == null)
+{
+    <div class="Logout">
+        <div class="alert alert-danger" role="alert">
+            @Html.ActionLink("Login PLEASE EPTA", "Login", "Account")
+        </div>
+        <div class="alert alert-danger">
+            <strong>Пожалуйста, продите</strong> @Html.ActionLink("Login PLEASE EPTA", "Login", "Account")
+        </div>
+    </div>
+
+}
+else
+{
+
+    <nav class="navbar bg-dark text-white">
+        <div class="container">
+            <div class="nav navbar-nav pull-sm-left">
+                <img src="~/images/TSI-logo.png" style="width:80%; height:80%" />
+            </div>
+
+            <div class="nav navbar-nav navbar-logo mx-auto">
+                <h5 class="nav-link" href="#">Личный кабинет</h5>
+            </div>
+            <div class="nav navbar-nav pull-sm-right order-0">
+                <h5 class="text-white">
+                    @Html.ActionLink("Выйти", "LogOut", "Account")
+                </h5>
+            </div>
+            <div class="nav navbar-nav pull-sm-right order-2">
+                <img src="~/images/avatar.png" style="height:50px; width:50px" />
+            </div>
+        </div>
+    </nav>
+
+
+
+
+
+
+    <section id="client-info" class="pb-0">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-5 col-sm-5 col-md-5">
+                    <div class="card">
+                        <div class="card-body text-left">
+
+
+                            @{
+                                string userinfo = ViewData["UserInfo"].ToString();
+                                string userinfo2 = ViewData["UserInfo2"].ToString();
+                                string userinfo3 = ViewData["UserInfo3"].ToString();
+                            }
+
+                            <p>ФИО: @userinfo </p>
+                            <p>Phone: @userinfo2</p>
+                            <p>E-mail: @userinfo3</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body text-left ">
+                            <p class="text-center">Лицевые счета</p>
+                            <p class="text-center" id="rDataAccountsCount"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body text-left">
+                            <p class="text-center">Услуги</p>
+                            <p class="text-center">?</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-2 col-sm-2 col-md-2">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body text-left">
+                            <p class="text-center">Задолженности</p>
+                            <p class="text-center" id="rData"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <section id="accountsTable" class="pb-1">
+        <div class="container">
+            <table class="table table-bordered table-hover bg-white txt-center" id="loadinfotable">
+                <thead>
+                    <tr>
+                        <th>Лицевой счет #</th>
+                        <th>Баланс</th>
+                        <th>Текущее резервирование</th>
+                        <th>Всего зарезервировано</th>
+                        <th>Доступно</th>
+                        <th>Кредитный лимит</th>
+
+                    </tr>
+                </thead>
+            </table>
+            <table class="table table-bordered table-hover bg-white txt-center">
+                <tr>
+                    <th>Рекомендуемый платеж:</th>
+                    <th>
+                        <strong id="rData2">
+
+                        </strong>
+                    </th>
+                </tr>
+            </table>
+
+
+        </div>
+    </section>
+
+
+
+    <!-- Team -->
+    <section id="team" class="pb-0">
+        <div class="container">
+            <div class="row">
+
+                <!-- Team member -->
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="image-flip">
+                        <div class="mainflip flip-0">
+                            <div class="frontside">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <p>
+                                            <img class=" img-fluid" src="~/images/internet-icon.png" alt="card image">
+                                        </p>
+                                        <h4 class="card-title">I N T E R N E T</h4>
+                                        <p class="card-text">Будь в контакте с Миром!</p>
+                                        <p><img src="~/images/flip-icon.jpg" alt="card image" /></p>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="backside">
+                                <div class="card">
+                                    <div class="card-body text-center mt-4">
+                                        <h4 class="card-title">I N T E R N E T</h4>
+                                        <p class="card-text">Статус: Активна   </p>
+                                        <p class="card-text">Тариф: Контакт-20</p>
+                                        <p class="card-text">Скорость: 100 Мбит/с</p>
+                                        <p class="card-text" href="#">Управление услугой</p>
+
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-skype"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-google"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./Team member -->
+                <!-- Team member -->
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="image-flip">
+                        <div class="mainflip flip-0">
+                            <div class="frontside">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <p>
+                                            <img class=" img-fluid" src="~/images/phone-icon.png" alt="card image">
+                                        </p>
+                                        <h4 class="card-title">ТЕЛЕФОНИЯ</h4>
+                                        <p class="card-text">Будь в контакте с Миром!</p>
+                                        <p><img src="~/images/flip-icon.jpg" alt="card image" /></p>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="backside">
+                                <div class="card">
+                                    <div class="card-body text-center mt-4">
+                                        <h4 class="card-title">ТЕЛЕФОНИЯ</h4>
+                                        <p class="card-text">Статус: Активна   </p>
+                                        <p class="card-text">Тариф: Контакт-20</p>
+                                        <p class="card-text">Скорость: 100 Мбит/с</p>
+
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-skype"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-google"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./Team member -->
+                <!-- Team member -->
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="image-flip">
+                        <div class="mainflip flip-0">
+                            <div class="frontside">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <p>
+                                            <img class=" img-fluid" src="~/images/multichannel.jpg" alt="card image">
+                                        </p>
+                                        <h4 class="card-title">КАНАЛЫ СВЯЗИ</h4>
+                                        <p class="card-text">Будь в контакте с Миром!</p>
+                                        <p><img src="~/images/flip-icon.jpg" alt="card image" /></p>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="backside">
+                                <div class="card">
+                                    <div class="card-body text-center mt-4">
+                                        <h4 class="card-title">КАНАЛЫ СВЯЗИ</h4>
+                                        <p class="card-text">Статус: Активна   </p>
+                                        <p class="card-text">Тариф: Контакт-20</p>
+                                        <p class="card-text">Скорость: 100 Мбит/с</p>
+                                        <p class="card-text">ываываываыв</p>
+
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-skype"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a class="social-icon text-xs-center" target="_blank" href="https://www.fiverr.com/share/qb8D02">
+                                                    <i class="fa fa-google"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./Team member -->
+
+            </div>
+        </div>
+    </section>
+    <!-- Team -->
+
+
+
+
+}
+<script type="text/jscript">
+    var url = "/Home/Load_userinfotable";
+    $.get(url, null, function (data) {
+        $("#rData").html(data.RecommendedPay);
+    });
+</script>
+<script type="text/jscript">
+    var url = "/Home/Load_userinfotable";
+    $.get(url, null, function (data) {
+        $("#rData2").html(data.RecommendedPay);
+    });
+</script>
+<script type="text/jscript">
+    var url = "/Home/Load_userinfotable";
+    $.get(url, null, function (data) {
+        $("#rDataAccountsCount").html(data.AccountsCount);
+    });
+</script>
+
+@TempData["User"]

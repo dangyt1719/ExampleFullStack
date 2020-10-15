@@ -1,0 +1,184 @@
+﻿
+
+<META Http-Equiv="Cache-Control" Content="no-cache" />
+<META Http-Equiv="Pragma" Content="no-cache" />
+<META Http-Equiv="Expires" Content="0" />
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+<!--===============================================================================================-->
+<link rel="icon" type="image/png" href="~/LoginCSS/favicon.ico" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/LoginVendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/LoginFonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/LoginFonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/LoginVendor/animate/animate.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/LoginVendor/css-hamburgers/hamburgers.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/LoginVendor/animsition/css/animsition.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/LoginVendor/select2/select2.min.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/LoginVendor/daterangepicker/daterangepicker.css">
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="~/LoginCSS/util.css">
+<link rel="stylesheet" type="text/css" href="~/LoginCSS/main.css">
+
+<!--<script type="text/javascript" >
+    history.forward();
+    </script>-->
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            swal(
+                {
+                    title: "Ошибка получения доступа к личному кабинету",
+                    text: "Введите корректное имя пользователя или пароль",
+                    type: 'warning',
+                    confirmButtonClass: "btn-info",
+                    confirmButtonText: 'Ok'
+                }).then((value)=>{
+                   var url = '@Url.Action("Login", "Account")';
+                    window.location.href = url;
+                });
+
+
+        })
+    </script>
+}
+else
+{
+  @*  <div class="container-fluid">
+        <div class="logo">
+            <img src="~/images/TSI-logo.png" style="height:10%; width:10%" />
+        </div>
+        <div class="clear-loading spinner">
+            <span></span>
+        </div>
+        <div class="w3ls-login box box--big">*@
+            <!-- form starts here -->
+            <div class="limiter">
+                <div class="container-login100">
+                    <div class="wrap-login100">
+                        <div class="login100-form-title" style="background-image: url(/images/bg-F.png);">
+                            <span class="login100-form-title-1">
+
+                            </span>
+                        </div>
+
+                        <form class="login100-form validate-form" action="@Url.Action("VerifyAsync", "Account")" method="post">
+                            <div class="wrap-input100 validate-input m-b-26" data-validate="Введите имя пользователя">
+                                <span class="label-input100"> <i class="fa fa-user" aria-hidden="true"></i><i> </i>Логин</span>
+
+                                <input class="input100" type="text" name="Name" placeholder="Введите имя пользователя">
+                                <span class="focus-input100"></span>
+                            </div>
+
+                            <div class="wrap-input100 validate-input m-b-18" data-validate="Введите пароль">
+                                <span class="label-input100"> <i class="fa fa-unlock-alt" aria-hidden="true"></i><i> </i>Пароль</span>
+                                <input class="input100" id="myInput" type="password" name="Password" placeholder="Введите пароль">
+                                <span class="focus-input100"></span>
+                            </div>
+
+                            <div class="flex-sb-m w-full p-b-30">
+                                <div class="contact100-form-checkbox">
+                                    <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me" onclick="myFunction()">
+                                    <label class="label-checkbox100" for="ckb1">
+                                        Показать пароль
+                                    </label>
+                                </div>
+                                <script>
+                                    function myFunction() {
+                                        var x = document.getElementById("myInput");
+                                        if (x.type === "password") {
+                                            x.type = "text";
+                                        } else {
+                                            x.type = "password";
+                                        }
+                                    }
+                                </script>
+                                @*           <div>
+                            <a href="#" class="txt1">
+                                Forgot Password?
+                            </a>
+                            </div>
+                                *@
+                            </div>
+
+                            <div class="container-login100-form-btn">
+                                <button class="login100-form-btn">
+                                    Войти
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @*<form action="@Url.Action("VerifyAsync", "Account")" method="post">
+            <div class="agile-field-txt">
+                <label><i class="fa fa-user" aria-hidden="true"></i> Имя пользователя </label>
+                <input type="text" name="Name" placeholder="Введите логин/номер лицевого счета" required="" />
+            </div>
+            <div class="agile-field-txt">
+                <label><i class="fa fa-unlock-alt" aria-hidden="true"></i> Пароль </label>
+                <input type="password" name="Password" placeholder="Введите пароль" required="" id="myInput" />
+                <div class="agile_label">
+                    <input id="check3" name="check3" type="checkbox" value="show password" onclick="myFunction()">
+                    <label class="check" for="check3">Показать пароль</label>
+                </div>
+
+            </div>
+            <!-- script for show password -->
+            <script>
+                function myFunction() {
+                    var x = document.getElementById("myInput");
+                    if (x.type === "password") {
+                        x.type = "text";
+                    } else {
+                        x.type = "password";
+                    }
+                }
+            </script>
+            <!-- //end script -->
+            <input type="submit" value="ВОЙТИ">
+        </form>*@
+ 
+
+        <!-- //form ends here -->
+        <!--copyright-->
+        @*  <div class="copy-wthree">
+
+            <p>
+                <a href="https://www.apple.com/ru/search/TSI?src=globalnav" target="_blank"> <img style="height:8%; width:8%" src="~/images/AppStore.png" /> </a>
+                <a href="https://play.google.com/store/search?q=tsi&c=apps&hl=ru" target="_blank"> <img style="height:8%; width:8%" src="~/images/PlayMarket.png" /> </a>
+            </p>
+
+        </div>*@
+
+        <!--===============================================================================================-->
+        <script src="~/LoginVendor/jquery/jquery-3.2.1.min.js"></script>
+        <!--===============================================================================================-->
+        <script src="~/LoginVendor/animsition/js/animsition.min.js"></script>
+        <!--===============================================================================================-->
+        <script src="~/LoginVendor/bootstrap/js/popper.js"></script>
+        <script src="~/LoginVendor/bootstrap/js/bootstrap.min.js"></script>
+        <!--===============================================================================================-->
+        <script src="~/LoginVendor/select2/select2.min.js"></script>
+        <!--===============================================================================================-->
+        <script src="~/LoginVendor/daterangepicker/moment.min.js"></script>
+        <script src="~/LoginVendor/daterangepicker/daterangepicker.js"></script>
+        <!--===============================================================================================-->
+        <script src="~/LoginVendor/countdowntime/countdowntime.js"></script>
+        <!--===============================================================================================-->
+        <script src="~/LoginCSS/main.js"></script>
+
+}
+
+

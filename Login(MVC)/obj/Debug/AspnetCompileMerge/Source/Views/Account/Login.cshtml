@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/_LayoutPage1.cshtml";
+}
+
+
+    <div class="logo">
+        <img src="~/images/TSI-logo.png" style="height:10%; width:10%" />
+    </div>
+    <div class="clear-loading spinner">
+        <span></span>
+    </div>
+    <div class="w3ls-login box box--big">
+        <!-- form starts here -->
+        <form action="VerifyAsync" method="post">
+            <div class="agile-field-txt">
+                <label><i class="fa fa-user" aria-hidden="true"></i> Имя пользователя </label>
+                <input type="text" name="Name" placeholder="Введите логин/номер лицевого счета" required="" />
+            </div>
+            <div class="agile-field-txt">
+                <label><i class="fa fa-unlock-alt" aria-hidden="true"></i> Пароль </label>
+                <input type="password" name="Password" placeholder="Введите пароль" required="" id="myInput" />
+                <div class="agile_label">
+                    <input id="check3" name="check3" type="checkbox" value="show password" onclick="myFunction()">
+                    <label class="check" for="check3">Показать пароль</label>
+                </div>
+                <div class="agile-right">
+                    <a href="#">Забыли пароль?</a>
+                </div>
+            </div>
+            <!-- script for show password -->
+            <script>
+                function myFunction() {
+                    var x = document.getElementById("myInput");
+                    if (x.type === "password") {
+                        x.type = "text";
+                    } else {
+                        x.type = "password";
+                    }
+                }
+            </script>
+            <!-- //end script -->
+            <input type="submit" value="ВОЙТИ">
+        </form>
+    </div>
+
+<!-- //form ends here -->
+<!--copyright-->
+    <div class="copy-wthree">
+
+        <p>
+            <a href="https://www.apple.com/ru/search/TSI?src=globalnav" target="_blank"> <img style="height:8%; width:8%" src="~/images/AppStore.png" /> </a>
+            <a href="https://play.google.com/store/search?q=tsi&c=apps&hl=ru" target="_blank"> <img style="height:8%; width:8%" src="~/images/PlayMarket.png" /> </a>
+        </p>
+        
+    </div>
+
+
+<!--//copyright-->
