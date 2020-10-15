@@ -1,0 +1,418 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <base href="http://demos.telerik.com/kendo-ui/grid/angular">
+    <style>
+        html {
+            font-size: 12px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <title></title>
+    <link href="http://cdn.kendostatic.com/2014.2.903/styles/kendo.common.min.css" rel="stylesheet" />
+    <link href="http://cdn.kendostatic.com/2014.2.903/styles/kendo.default.min.css" rel="stylesheet" />
+    <link href="http://cdn.kendostatic.com/2014.2.903/styles/kendo.dataviz.min.css" rel="stylesheet" />
+    <link href="http://cdn.kendostatic.com/2014.2.903/styles/kendo.dataviz.default.min.css" rel="stylesheet" />
+    <script src="http://cdn.kendostatic.com/2014.2.903/js/jquery.min.js"></script>
+    <script src="http://cdn.kendostatic.com/2014.2.903/js/angular.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/bower-angular-translate/2.0.1/angular-translate.min.js"></script>
+    <script src="http://cdn.kendostatic.com/2014.2.903/js/kendo.all.min.js"></script>
+    <script src="http://cdn.kendostatic.com/2014.2.903/js/cultures/kendo.culture.de-DE.min.js"></script>
+    <script src="http://cdn.kendostatic.com/2014.2.903/js/cultures/kendo.culture.en-US.min.js"></script>
+    <script src="http://cdn.kendostatic.com/2014.2.903/js/cultures/kendo.culture.ru-RU.min.js"></script>
+    <!-- HTML -->
+</head>
+<body>
+    <div id="example" ng-app="KendoDemos">
+        <div ng-controller="MyCtrl">
+            <p>{{ 'TITLE' | translate }}</p>
+            <p>{{ 'FOO' | translate }}</p>
+
+         
+            <kendo-dropdownlist options="dropDownOptions" ng-model="lang"></kendo-dropdownlist>
+
+            <p>
+                {{'COUNT' | translate}}
+            </p>
+            <p>
+                <kendo-dropdownlist options="dropDownOptionsRow" ng-model="count"></kendo-dropdownlist>
+            </p>
+
+
+           
+            <kendo-grid options="mainGridOptions" k-rebind="mainGridOptions.language"></kendo-grid>
+
+          
+            <kendo-calendar options="calendarOptions" k-rebind="calendarOptions.culture"></kendo-calendar>
+
+            <kendo-chart options="chartOptions" k-rebind="calendarOptions.culture"></kendo-chart>
+        </div>
+    </div>
+    <style>
+        .blue {
+            background-color: blue
+        }
+
+        .red {
+            background-color: #f00
+        }
+
+        .discontinued {
+            font-weight: bold;
+            color: #f00;
+        }
+
+        .critical {
+            background-color: #fdd;
+        }
+
+        .warning {
+            background-color: #fda;
+        }
+
+        .ok {
+            background-color: #ced;
+        }
+    </style>
+    <script>
+        var app = angular.module("KendoDemos", ["kendo.directives", "pascalprecht.translate"]);
+
+        
+        app.config(['$translateProvider', function ($translateProvider) {
+            $translateProvider.translations('en-US', {
+                'TITLE': 'Hello',
+                'FOO': 'This is a paragraph',
+                'COUNT': 'Select the number of lines to display'
+
+            });
+
+            $translateProvider.translations('de-DE', {
+                'TITLE': 'Hallo',
+                'FOO': 'Dies ist ein Paragraph',
+                'COUNT': 'Wählen Sie die Anzahl der anzuzeigenden Zeilen'
+            });
+            ///ADDED
+            $translateProvider.translations('ru-RU', {
+                'TITLE': 'Привет',
+                'FOO': 'Это параграф',
+                'COUNT': 'Выберите количество отображаемых строк'
+            });
+            $translateProvider.translations()
+            $translateProvider.preferredLanguage('en-US');
+        }]);
+
+        function MyCtrl($scope, $translate) {
+
+            $scope.lang = "en-US";
+
+            $scope.calendarOptions = {
+                culture: "en-US"
+            }
+
+            $scope.dropDownOptions = {
+                dataValueField: "value",
+                dataTextField: "text",
+                dataSource: {
+                    data: [{ value: "en-US", text: "English" }, { value: "de-DE", text: "GermanT" }, { value: "ru-RU", text: "Russia" }]
+                },
+                change: function () {
+
+                    $.getScript("http://cdn.kendostatic.com/2014.2.903/js/messages/kendo.messages." + $scope.lang + ".min.js", function () {
+
+                       
+                        $scope.$apply(function () {
+
+                            $translate.use($scope.lang); 
+                            kendo.culture($scope.lang); 
+
+                         
+                            $scope.mainGridOptions.language = $scope.lang;
+
+                      
+                            if ($scope.lang == "ru-RU") {
+                                $scope.mainGridOptions.language = $scope.lang;
+                            }
+                            $scope.calendarOptions.culture = $scope.lang;
+
+                        })
+
+
+                    });
+                }
+            }
+
+            $scope.dropDownOptionsRow = {
+                dataValueField: "value",
+                dataTextField: "text",
+                dataSource: {
+                    data: [{ value: "4", text: "4" }, { value: "5", text: "5" }, { value: "6", text: "6" }, { value: "7", text: "7" }]
+                },
+                change: function () {
+
+                    alert($scope.count);
+                   
+                   
+                  $.getScript("http://cdn.kendostatic.com/2014.2.903/js/messages/kendo.messages." + $scope.count + ".min.js", function () {
+
+                     
+                        $scope.$apply(function () {
+
+                          $translate.use($scope.lang); 
+                           kendo.culture($scope.lang); 
+
+                          
+                            $scope.mainGridOptions.pageSize = $scope.count;
+                            $scope.mainGridOptions.refresh();
+
+                           
+                         if ($scope.lang == "ru-RU") {
+                               $scope.mainGridOptions.language = $scope.lang;
+                           }
+
+                       
+                         $scope.calendarOptions.culture = $scope.lang;
+
+                        })
+
+
+                   });
+                }
+            }
+
+
+            $scope.mainGridOptions = {
+                dataSource: {
+                    type: "odata",
+                    transport: {
+                        read: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Employees",
+                        update: {
+                            url: "http://demos.telerik.com/kendo-ui/service/Northwind.svc/Employees/Update", contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            type: "POST"
+                        }
+                    },
+
+                    pageSize: 5,
+                    serverPaging: true,
+                    serverSorting: true
+                },
+                rules: {
+                    greaterdate: function (input) {
+                        if (input.is("[data-greaterdate-msg]") && input.val() != "") {
+                            alert("done");
+                           
+                        }
+
+                        return true;
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "Id",
+                        fields: {
+                            FirstName: { editable: false, validation: { required: true } },
+                            LastName: { editable: true, validation: { required: true } },
+                            DateOfBirth: { validation: { required: true }, type: "date" },
+                            EmploymentDate: { validation: { required: true }, type: "date" },
+                            Country: {},
+                            City: {},
+                            Extension: {}
+
+                        }
+                    }
+                },
+                translations: true,
+                sortable: true,
+                pageable: true,
+                editable: "inline",
+                edit: onEdit,
+              
+
+                language: "english",
+                pageable: {
+                    refresh: true,
+                    pageSizes: true,
+                    buttonCount: 4
+                },
+                columns: [{
+                    field: "FirstName",
+                    title: "First Name",
+                    width: "120px",
+                    template: "#if(FirstName.length <LastName.length){#<span class='blue'>#: FirstName #</span>#}else{#<span class='red'>#: FirstName #</span>#}#"
+                }, {
+                    field: "LastName",
+                    title: "Last Name",
+                    width: "120px",
+                    template: "#if(LastName.length >FirstName.length){#<span class='red'>#: LastName #</span>#}else{#<span class='blue'>#: LastName #</span>#}#"
+                },
+                {
+                    //  template: "<input name='datepicker1' id='datepicker1' type='date' data - format='dd MMMM yyyy' data - role='datepicker' required='required'  /> <span data-for='datepicker1' class='k-invalid - msg'></span>",
+                    field: "DateOfBirth",
+                    format: "{0: dd MM yyyy}",
+                    title: "Date of birth",
+                    width: "140px"
+
+                },
+
+                {
+                    //  template: "<input name='datepicker2' id='datepicker2' type='date' data - format='dd MMMM yyyy' data - role='datepicker' data-greaterdate-field='datepicker1' data-greaterdate-msg='Retire date should be afterdatepicker1'/> <span data-for='datepicker2' class='k-invalid - msg'></span>",
+                    format: "{0: dd MM yyyy}",
+                    field: "EmploymentDate",
+                    title: "Employment Date",
+                    width: "140px"
+
+
+                },
+
+                {
+                    field: "Country",
+                    width: "120px"
+                }, {
+                    field: "City",
+                    width: "120px"
+                }, {
+                    field: "Extension",
+                    width: "120px"
+                }
+                    , {
+                    command: ["edit", "destroy"],
+                    title: "&nbsp;",
+                    width: "250px"
+                }],
+
+
+
+
+
+            };
+            var test=function getcolumndata() {
+                var gridDataArray = $scopt.mainGridOptions._data;
+                var columnDataVector = [];
+                var columnName = 'Country';
+                for (var index = 0; index < gridDataArray.length; index++) {
+                    columnDataVector[index] = gridDataArray[index][columnName];
+                };
+                alert(columnDataVector);
+                return columnDataVector;
+            }
+           
+            $scope.chartOptions = {
+                title: {
+                    position: "bottom",
+                    text: "Share of Internet Population Growth, 2007 - 2012"
+                },
+                legend: {
+                    visible: false
+                },
+                chartArea: {
+                    background: ""
+                },
+                seriesDefaults: {
+                    labels: {
+                        visible: true,
+                        background: "transparent",
+                        template: "#= category #: \n #= value#%"
+                    }
+                },
+                series: [{
+                    type: "pie",
+                    startAngle: 150,
+                    data: test
+                }],
+               /* series: [{
+                    type: "pie",
+                    startAngle: 150,
+                    data: [{
+                        category: "Asia",
+                        value: 53.8,
+                        color: "#9de219"
+                    }, {
+                        category: "Europe",
+                        value: 16.1,
+                        color: "#90cc38"
+                    }, {
+                        category: "Latin America",
+                        value: 11.3,
+                        color: "#068c35"
+                    }, {
+                        category: "Africa",
+                        value: 9.6,
+                        color: "#006634"
+                    }, {
+                        category: "Middle East",
+                        value: 5.2,
+                        color: "#004d38"
+                    }, {
+                        category: "North America",
+                        value: 3.6,
+                        color: "#033939"
+                    }]
+                }],*/
+                tooltip: {
+                    visible: true,
+                    format: "{0}%"
+                }
+            }
+        }
+
+        function onEdit(e) {
+            var dp1 = e.container.find("[name='DateOfBirth']").kendoDatePicker();
+            var dp2 = e.container.find("[name='EmploymentDate']").kendoDatePicker();
+            
+            dp1.bind("change", function (e) {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                var yyyy = today.getFullYear();
+
+                today = mm + '/' + dd + '/' + yyyy;
+                alert(today);
+                alert(Date.parse(today));
+                if (Date.parse(today) < Date.parse(dp1.val())) {
+                    alert("SRABOTALO");
+                    var tr = e.target.closest('td');
+                    tr.className += " red";
+                }
+              //  alert(dp1.val());
+                // var nextDay = new Date(dp1.value());
+                // nextDay.setDate(nextDay.getDate() + 1);
+                //  dp2.value(nextDay);
+                //  dp1.trigger("change");
+            })
+            dp2.bind("change", function (e) {
+
+                if (Date.parse(dp2.val()) > Date.parse(dp1.val())) {
+
+                    alert(Date.parse(dp2.val()));
+                  //  alert(dp2.val() + " LOL ");
+                    var tr = e.target.closest('td');
+                    tr.className += " critical";
+                 
+
+                    var tr2 = e.target.closest('tr');
+                 //   alert("target tr");
+                    var txt = tr2.childNodes[2];
+                  // var tdOfCurrentColumn =tr2.children().eq(1).text();
+                  //  alert(txt);
+                    txt.className += " critical";
+                   
+                  
+
+
+                    //  var nextDay = new Date(dp1.value());
+                    //  nextDay.setDate(nextDay.getDate() + 1);
+                    // dp2.value(nextDay);
+
+                }
+            })
+        }
+    </script>
+    <script>
+        $("#datepicker2").on('change', function () {
+            alert("sdfdsf");
+        });
+
+    </script>
+
+</body>
+</html>
